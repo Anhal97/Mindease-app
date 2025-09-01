@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindEase - Your Mental Wellness Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .nav-item.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .main-content > div {
+            display: none;
+        }
+        .main-content > div.active {
+            display: block;
+        }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            word-wrap: break-word;
+        }
+        .chat-bubble-user {
+            background-color: #3b82f6;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-bubble-ai {
+            background-color: #e5e7eb;
+            color: #1f2937;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .goal-progress {
+            transition: width 0.3s ease-in-out;
+        }
+        #chat-input:disabled {
+            background-color: #e5e7eb;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <div id="script-error-message" class="fixed inset-0 bg-red-900 bg-opacity-95 text-white p-8 z-50 flex items-center justify-center text-center">
+        <div>
+            <h2 class="text-3xl font-bold mb-4">MindEase App Did Not Start Correctly</h2>
+            <p class="text-lg">The app's interactive features could not be loaded. This often happens due to browser security restrictions when you open the HTML file directly from your computer's folder (using a <code class="bg-black/50 px-1 rounded-sm">file:///...</code> address).</p>
+            <div class="mt-6 p-4 bg-gray-800 rounded-lg text-left max-w-2xl mx-auto">
+                <h3 class="font-semibold text-xl mb-2">How to Fix This:</h3>
+                <p>To use all features, this app needs to be served by a simple local web server.</p>
+                <ol class="list-decimal list-inside mt-2 space-y-2">
+                    <li>Open a command prompt or terminal in the same folder where you saved this <code class="bg-black/50 px-1 rounded-sm">mindease.html</code> file.</li>
+                    <li>If you have Python installed, type this command and press Enter: <br><code class="block bg-black/50 p-2 rounded mt-1 text-green-300">python -m http.server</code></li>
+                    <li>Open your web browser and go to this address: <br><a href="http://localhost:8000/mindease.html" class="underline text-blue-300" target="_blank">http://localhost:8000/mindease.html</a></li>
+                </ol>
+            </div>
+            <p class="mt-4 text-sm text-gray-300">Once the app loads correctly from a local server, this message will disappear.</p>
+        </div>
+    </div>
+
+    <div id="app-container" class="max-w-4xl mx-auto min-h-screen bg-white shadow-lg flex flex-col md:flex-row" style="display: none;">
+
+        
+<aside class="w-full md:w-1/5 bg-blue-500 text-white p-4 flex flex-row md:flex-col justify-around md:justify-start">
+            <h1 class="text-2xl font-bold mb-0 md:mb-8 text-center md:text-left">MindEase</h1>
+            <nav class="flex flex-row md:flex-col gap-2">
+                <button data-target="home" class="nav-item w-full text-left p-3 rounded-lg font-medium transition duration-200 hover:bg-blue-600 active">Home</button>
+                <button data-target="journal" class="nav-item w-full text-left p-3 rounded-lg font-medium transition duration-200 hover:bg-blue-600">Journal</button>
+                <button data-target="meditate" class="nav-item w-full text-left p-3 rounded-lg font-medium transition duration-200 hover:bg-blue-600">Meditate</button>
+                <button data-target="chat" class="nav-item w-full text-left p-3 rounded-lg font-medium transition duration-200 hover:bg-blue-600">Chatbot</button>
+                <button data-target="goals" class="nav-item w-full text-left p-3 rounded-lg font-medium transition duration-200 hover:bg-blue-600">Goals</button>
+                <button data-target="resources" class="nav-item w-full text-left p-3 rounded-lg font-medium transition duration-200 hover:bg-blue-600">Resources</button>
+                <button data-target="settings" class="nav-item w-full text-left p-3 rounded-lg font-medium transition duration-200 hover:bg-blue-600">Settings</button>
+            </nav>
+            <div id="auth-status" class="mt-auto text-center text-xs p-2">
+                Connecting...
+            </div>
+        </aside>
+
+        
+<main class="flex-1 p-6 md:p-8 bg-gray-50 overflow-y-auto">
+            <div class="main-content">
+
+                
+<div id="home" class="active animate-fade-in">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome to MindEase</h2>
+                    <p class="text-lg text-gray-600 mb-6">Your personal space for mental clarity and peace. Select a tool from the menu to begin your journey towards a healthier mind.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-blue-100 border border-blue-200 p-6 rounded-xl">
+                            <h3 class="text-xl font-semibold mb-2 text-blue-800">Reflect on Your Day</h3>
+                            <p class="text-blue-700">Use the journal to write down your thoughts and track your mood. Understanding your feelings is the first step to managing them.</p>
+                        </div>
+                        <div class="bg-green-100 border border-green-200 p-6 rounded-xl">
+                            <h3 class="text-xl font-semibold mb-2 text-green-800">Find Your Calm</h3>
+                            <p class="text-green-700">Explore guided meditations and breathing exercises to reduce stress and find your center.</p>
+                        </div>
+                        <div class="bg-purple-100 border border-purple-200 p-6 rounded-xl">
+                            <h3 class="text-xl font-semibold mb-2 text-purple-800">AI Companion</h3>
+                            <p class="text-purple-700">Talk to our friendly AI chatbot for supportive conversations and coping strategies, anytime you need.</p>
+                        </div>
+                        <div class="bg-yellow-100 border border-yellow-200 p-6 rounded-xl">
+                            <h3 class="text-xl font-semibold mb-2 text-yellow-800">Set Wellness Goals</h3>
+                            <p class="text-yellow-700">Create and track small, achievable goals to build positive mental health habits over time.</p>
+                        </div>
+                    </div>
+                </div>
+
+                
+<div id="journal">
+                    <h2 class="text-3xl font-bold mb-6">My Journal</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                        <h3 class="text-xl font-semibold mb-4">How are you feeling today?</h3>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <label for="mood-select">Mood:</label>
+                            <select id="mood-select" class="p-2 border rounded-md">
+                                <option>😊 Happy</option>
+                                <option>🙂 Content</option>
+                                <option>😐 Neutral</option>
+                                <option>😔 Sad</option>
+                                <option>😠 Angry</option>
+                                <option>😰 Anxious</option>
+                            </select>
+                        </div>
+                        <textarea id="journal-entry" class="w-full p-3 border rounded-md" rows="5" placeholder="Write about your day..."></textarea>
+                        <button id="save-journal-entry" class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 transition">Save Entry</button>
+                    </div>
+                    <div id="journal-history">
+                        <h3 class="text-2xl font-bold mb-4">Past Entries</h3>
+                        <div id="journal-list" class="space-y-4">
+                        </div>
+                    </div>
+                </div>
+
+                
+<div id="meditate">
+                    <h2 class="text-3xl font-bold mb-6">Guided Meditation & Breathing</h2>
+                    <div id="meditation-player" class="hidden bg-white p-6 rounded-lg shadow-md mb-6 text-center">
+                        <h3 id="player-title" class="text-2xl font-semibold mb-4"></h3>
+                        <p id="player-description" class="text-gray-600 mb-6"></p>
+                        <div id="breathing-circle" class="w-40 h-40 bg-blue-300 rounded-full mx-auto my-4 flex items-center justify-center transition-transform duration-3000 ease-in-out">
+                            <span id="breathing-text" class="text-xl font-medium text-white"></span>
+                        </div>
+                        <button id="stop-meditation" class="mt-4 bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition">Stop</button>
+                    </div>
+                    <div id="meditation-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    </div>
+                </div>
+
+                
+<div id="chat" class="flex flex-col h-[calc(100vh-120px)]">
+                    <h2 class="text-3xl font-bold mb-4">AI Wellness Companion</h2>
+                    <div id="chat-window" class="flex-1 bg-gray-100 p-4 rounded-lg overflow-y-auto mb-4 flex flex-col gap-4">
+                    </div>
+                    <div id="chat-input-container" class="flex">
+                        <input type="text" id="chat-input" class="flex-1 p-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type your message...">
+                        <button id="chat-send" class="bg-blue-500 text-white px-6 py-2 rounded-r-lg font-semibold hover:bg-blue-600 transition">Send</button>
+                    </div>
+                </div>
+
+                
+<div id="goals">
+                    <h2 class="text-3xl font-bold mb-6">My Wellness Goals</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                        <h3 class="text-xl font-semibold mb-4">Add a New Goal</h3>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <input type="text" id="goal-input" class="flex-1 p-3 border rounded-lg" placeholder="e.g., Meditate for 5 minutes">
+                            <input type="number" id="goal-target" class="p-3 border rounded-lg w-full sm:w-32" placeholder="Target (days)">
+                            <button id="add-goal" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 transition">Add Goal</button>
+                        </div>
+                    </div>
+                    <div id="goal-list" class="space-y-4">
+                    </div>
+                </div>
+
+                
+<div id="resources">
+                    <h2 class="text-3xl font-bold mb-6">Helpful Resources</h2>
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-2">Understanding Anxiety</h3>
+                            <p class="text-gray-600 mb-4">Learn about the symptoms, causes, and treatments for anxiety disorders. Knowledge is a powerful tool in managing your mental health.</p>
+                            <a href="https://www.nimh.nih.gov/health/topics/anxiety-disorders" target="_blank" class="text-blue-500 font-semibold hover:underline">Read more &rarr;</a>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-2">Cognitive Behavioral Therapy (CBT)</h3>
+                            <p class="text-gray-600 mb-4">Discover how CBT techniques can help you identify and change negative thinking patterns and behaviors.</p>
+                            <a href="https://www.apa.org/ptsd-guideline/patients-and-families/cognitive-behavioral" target="_blank" class="text-blue-500 font-semibold hover:underline">Learn CBT Basics &rarr;</a>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-2">Emergency Help</h3>
+                            <p class="text-gray-600 mb-4">If you are in crisis or need immediate support, please reach out to a professional. You are not alone.</p>
+                            <a href="https://findahelpline.com/" target="_blank" class="text-red-500 font-semibold hover:underline">Find a Helpline &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                
+<div id="settings">
+                    <h2 class="text-3xl font-bold mb-6">Settings</h2>
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-2">Firebase Configuration (Required)</h3>
+                            <p class="text-gray-600 mb-4">To save data locally, you need a free Firebase project. Create one and paste your web app configuration values below.</p>
+                            <div class="space-y-3">
+                                <input type="text" id="fb-apiKey" class="w-full p-3 border rounded-lg" placeholder="Firebase API Key">
+                                <input type="text" id="fb-authDomain" class="w-full p-3 border rounded-lg" placeholder="Firebase Auth Domain">
+                                <input type="text" id="fb-projectId" class="w-full p-3 border rounded-lg" placeholder="Firebase Project ID">
+                            </div>
+                            <button id="save-firebase-config" class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 transition">Save Config</button>
+                            <p id="firebase-status" class="text-sm mt-2 text-gray-500"></p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-2">AI Chatbot Configuration</h3>
+                            <p class="text-gray-600 mb-4">To use the AI chatbot, you need a Gemini API key from Google AI Studio.</p>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <input type="password" id="api-key-input" class="flex-1 p-3 border rounded-lg" placeholder="Enter your Gemini API Key">
+                                <button id="save-api-key" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 transition">Save Key</button>
+                            </div>
+                            <p id="api-key-status" class="text-sm mt-2 text-gray-500"></p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-2">Data Export</h3>
+                            <p class="text-gray-600 mb-4">Download your personal data from the app. The files will be in JSON format.</p>
+                            <div class="flex gap-4">
+                                <button id="download-journal" class="bg-gray-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-600 transition">Download Journal</button>
+                                <button id="download-goals" class="bg-gray-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-600 transition">Download Goals</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+
+    
+<script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, setDoc, deleteDoc, orderBy, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- CONFIGURATION ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mindease-app';
+        let app, auth, db, userId, journalUnsubscribe, goalsUnsubscribe, geminiApiKey;
+
+        // --- DOM ELEMENTS ---
+        const saveJournalBtn = document.getElementById('save-journal-entry');
+        const stopMeditationBtn = document.getElementById('stop-meditation');
+        const chatSendBtn = document.getElementById('chat-send');
+        const chatInput = document.getElementById('chat-input');
+        const addGoalBtn = document.getElementById('add-goal');
+        const saveFirebaseConfigBtn = document.getElementById('save-firebase-config');
+
+        // --- INITIALIZATION ---
+        function initializeAppLogic() {
+            let userFirebaseConfig = JSON.parse(localStorage.getItem('firebaseConfig'));
+            
+            if (typeof __firebase_config !== 'undefined') {
+                userFirebaseConfig = JSON.parse(__firebase_config);
+            }
+
+            const firebaseStatus = document.getElementById('firebase-status');
+            const authStatus = document.getElementById('auth-status');
+
+            if (!userFirebaseConfig || !userFirebaseConfig.apiKey) {
+                authStatus.textContent = "Firebase Not Configured";
+                authStatus.classList.add("text-yellow-300");
+                firebaseStatus.textContent = "Please configure Firebase in Settings to save data.";
+                firebaseStatus.className = "text-sm mt-2 text-red-600";
+                return;
+            }
+            
+            firebaseStatus.textContent = "Firebase configuration is set.";
+            firebaseStatus.className = "text-sm mt-2 text-green-600";
+            
+            initializeFirebase(userFirebaseConfig);
+        }
+
+        async function initializeFirebase(firebaseConfig) {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                const authStatus = document.getElementById('auth-status');
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        authStatus.textContent = `Connected`;
+                        loadAppData();
+                    } else {
+                        try {
+                             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Anonymous sign-in failed:", error);
+                            if (error.code === 'auth/api-key-not-valid') {
+                                authStatus.textContent = "Invalid Firebase Key";
+                                authStatus.classList.add("text-red-400");
+                            } else {
+                                authStatus.textContent = "Auth Failed";
+                            }
+                        }
+                    }
+                });
+            } catch(e) {
+                console.error("Firebase initialization failed:", e);
+                document.getElementById('auth-status').textContent = "Firebase Init Failed";
+            }
+        }
+
+        function loadAppData() {
+            loadJournalEntries();
+            loadGoals();
+        }
+
+        // --- NAVIGATION ---
+        const navButtons = document.querySelectorAll('.nav-item');
+        const contentDivs = document.querySelectorAll('.main-content > div');
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.dataset.target;
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                contentDivs.forEach(div => {
+                    div.classList.remove('active');
+                    if (div.id === targetId) {
+                        div.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // --- JOURNAL LOGIC ---
+        const journalEntryInput = document.getElementById('journal-entry');
+        const moodSelect = document.getElementById('mood-select');
+        const journalList = document.getElementById('journal-list');
+
+        async function saveJournalEntry() {
+            if (!userId) return;
+            const entryText = journalEntryInput.value.trim();
+            const mood = moodSelect.value;
+            if (entryText === "") return;
+
+            try {
+                const journalCollection = collection(db, `artifacts/${appId}/users/${userId}/journal`);
+                await addDoc(journalCollection, {
+                    mood: mood,
+                    text: entryText,
+                    createdAt: serverTimestamp()
+                });
+                journalEntryInput.value = "";
+            } catch (error) {
+                console.error("Error saving journal entry:", error);
+            }
+        }
+
+        function loadJournalEntries() {
+            if (!userId) return;
+            if (journalUnsubscribe) journalUnsubscribe();
+
+            const journalCollection = collection(db, `artifacts/${appId}/users/${userId}/journal`);
+            const q = query(journalCollection, orderBy("createdAt", "desc"));
+            
+            journalUnsubscribe = onSnapshot(q, (snapshot) => {
+                journalList.innerHTML = "";
+                if (snapshot.empty) {
+                    journalList.innerHTML = `<p class="text-gray-500">No journal entries yet.</p>`;
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const entry = doc.data();
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'bg-white p-4 rounded-lg shadow';
+                    const date = entry.createdAt ? entry.createdAt.toDate().toLocaleDateString() : 'Just now';
+                    entryEl.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="font-semibold text-lg">${entry.mood}</p>
+                            <p class="text-sm text-gray-500">${date}</p>
+                        </div>
+                        <p class="text-gray-700">${entry.text}</p>
+                    `;
+                    journalList.appendChild(entryEl);
+                });
+            }, (error) => console.error("Error loading journal:", error));
+        }
+
+        // --- MEDITATION LOGIC ---
+        const meditationList = document.getElementById('meditation-list');
+        const meditationPlayer = document.getElementById('meditation-player');
+        const playerTitle = document.getElementById('player-title');
+        const playerDescription = document.getElementById('player-description');
+        const breathingCircle = document.getElementById('breathing-circle');
+        const breathingText = document.getElementById('breathing-text');
+        
+        let synth, meditationInterval;
+
+        const sessions = [
+            { id: 'box-breathing', title: 'Box Breathing', description: 'A simple technique to calm your nervous system. Inhale for 4s, hold for 4s, exhale for 4s, hold for 4s.', duration: 120 },
+            { id: 'mindful-breath', title: 'Mindful Breath', description: 'Focus on your natural breath to anchor yourself in the present moment.', duration: 180 },
+            { id: '5-minute-calm', title: '5-Minute Calm', description: 'A short session to quickly reset and de-stress.', duration: 300 }
+        ];
+
+        function renderMeditationList() {
+            meditationList.innerHTML = '';
+            sessions.forEach(session => {
+                const sessionEl = document.createElement('div');
+                sessionEl.className = 'bg-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-xl transition';
+                sessionEl.innerHTML = `
+                    <h3 class="text-xl font-semibold mb-2">${session.title}</h3>
+                    <p class="text-gray-600">${session.description}</p>
+                `;
+                sessionEl.addEventListener('click', () => startMeditation(session.id));
+                meditationList.appendChild(sessionEl);
+            });
+        }
+        
+        function startMeditation(sessionId) {
+            const session = sessions.find(s => s.id === sessionId);
+            if (!session) return;
+
+            meditationList.classList.add('hidden');
+            meditationPlayer.classList.remove('hidden');
+            playerTitle.textContent = session.title;
+            playerDescription.textContent = session.description;
+            
+            Tone.start().catch(e => console.error("Tone.js could not start: ", e));
+            synth = new Tone.Synth().toDestination();
+            
+            if (sessionId === 'box-breathing') {
+                runBoxBreathing();
+            } else {
+                breathingCircle.style.transform = 'scale(1)';
+                breathingText.textContent = 'Breathe';
+            }
+        }
+
+        function runBoxBreathing() {
+            const sequence = ['Inhale', 'Hold', 'Exhale', 'Hold'];
+            let step = 0;
+            
+            const nextStep = () => {
+                const instruction = sequence[step % 4];
+                breathingText.textContent = instruction;
+                if(Tone.context.state === 'running') synth.triggerAttackRelease("C4", "0.1");
+
+                if (instruction === 'Inhale' || instruction === 'Exhale') {
+                    breathingCircle.style.transform = instruction === 'Inhale' ? 'scale(1.2)' : 'scale(0.8)';
+                }
+                step++;
+            };
+            
+            nextStep();
+            meditationInterval = setInterval(nextStep, 4000);
+        }
+
+        function stopMeditation() {
+            clearInterval(meditationInterval);
+            meditationInterval = null;
+            if (synth) synth.dispose();
+            
+            meditationPlayer.classList.add('hidden');
+            meditationList.classList.remove('hidden');
+            breathingCircle.style.transform = 'scale(1)';
+            breathingText.textContent = '';
+        }
+
+        // --- CHATBOT LOGIC ---
+        const chatWindow = document.getElementById('chat-window');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const apiKeyStatus = document.getElementById('api-key-status');
+
+        const systemPrompt = "You are a caring and supportive mental wellness assistant named 'Ease'. Your role is to provide a safe, non-judgmental space for users. Offer comfort, practical advice based on CBT and mindfulness, and gentle encouragement. Do not provide medical diagnoses. If a user seems to be in serious distress, gently suggest they seek professional help. Keep your responses concise and empathetic.";
+        let chatHistory = [];
+        
+     function updateChatUI() {
+    chatInput.disabled = false;
+    chatSendBtn.disabled = false;
+    chatInput.placeholder = "Type your message...";
+    if (chatHistory.length === 0) {
+        chatHistory = [{ role: "model", parts: [{ text: "Hello! I'm Ease, your wellness companion. How are you feeling today?" }] }];
+    }
+    renderChatHistory();
+}
+
+        function renderChatHistory() {
+            chatWindow.innerHTML = '';
+            chatHistory.forEach(msg => {
+                const isUser = msg.role === 'user';
+                addMessageToChat(msg.parts[0].text, isUser);
+            });
+        }
+        
+        function addMessageToChat(text, isUser) {
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${isUser ? 'chat-bubble-user' : 'chat-bubble-ai'}`;
+            bubble.textContent = text;
+            chatWindow.appendChild(bubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        async function getAIResponse(userMessage) {
+            addMessageToChat(userMessage, true);
+            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            
+            const loadingBubble = document.createElement('div');
+            loadingBubble.className = 'chat-bubble chat-bubble-ai animate-pulse';
+            loadingBubble.textContent = '...';
+            chatWindow.appendChild(loadingBubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            
+            // This is the new URL pointing to your helper function
+            const apiUrl = '/.netlify/functions/ask-chatbot';
+
+            try {
+                const payload = {
+                    messages: chatHistory
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`The server responded with an error.`);
+                }
+
+                const result = await response.json();
+                const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                loadingBubble.remove();
+
+                if (aiText) {
+                    addMessageToChat(aiText, false);
+                    chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+                } else {
+                    addMessageToChat("I'm sorry, I couldn't process that. Please try again.", false);
+                    chatHistory.pop(); // remove the user message if AI fails
+                }
+
+            } catch (error) {
+                console.error("Error fetching AI response:", error);
+                loadingBubble.remove();
+                addMessageToChat("There was an error connecting to the chatbot. Please try again later.", false);
+                chatHistory.pop(); // remove the user message if AI fails
+            }
+        }
+        async function handleChatSend() {
+    const message = chatInput.value.trim();
+    if (message) { // Fixed!
+        chatInput.value = "";
+        await getAIResponse(message);
+    }
+}
+        
+        // --- GOALS LOGIC ---
+        const goalInput = document.getElementById('goal-input');
+        const goalTargetInput = document.getElementById('goal-target');
+        const goalList = document.getElementById('goal-list');
+
+        async function addGoal() {
+            if (!userId) return;
+            const text = goalInput.value.trim();
+            const target = parseInt(goalTargetInput.value, 10);
+            if (text === "" || isNaN(target) || target <= 0) return;
+            
+            try {
+                const goalsCollection = collection(db, `artifacts/${appId}/users/${userId}/goals`);
+                await addDoc(goalsCollection, {
+                    text: text,
+                    progress: 0,
+                    target: target,
+                    createdAt: serverTimestamp()
+                });
+                goalInput.value = "";
+                goalTargetInput.value = "";
+            } catch(error) {
+                console.error("Error adding goal:", error);
+            }
+        }
+
+        function loadGoals() {
+            if (!userId) return;
+            if (goalsUnsubscribe) goalsUnsubscribe();
+
+            const goalsCollection = collection(db, `artifacts/${appId}/users/${userId}/goals`);
+            const q = query(goalsCollection, orderBy("createdAt", "desc"));
+
+            goalsUnsubscribe = onSnapshot(q, (snapshot) => {
+                goalList.innerHTML = "";
+                if (snapshot.empty) {
+                    goalList.innerHTML = `<p class="text-gray-500">No goals set yet. Add one to get started!</p>`;
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const goal = doc.data();
+                    const goalEl = document.createElement('div');
+                    goalEl.className = 'bg-white p-4 rounded-lg shadow';
+                    const percentage = goal.target > 0 ? Math.round((goal.progress / goal.target) * 100) : 0;
+                    
+                    goalEl.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="font-semibold">${goal.text}</p>
+                            <p class="text-sm text-gray-600">${goal.progress} / ${goal.target} days</p>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div class="bg-green-500 h-4 rounded-full goal-progress" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="flex justify-end gap-2 mt-3">
+                            <button data-id="${doc.id}" data-progress="${goal.progress}" class="increment-btn bg-green-100 text-green-800 px-3 py-1 text-sm rounded-full hover:bg-green-200 transition">+1 Day</button>
+                            <button data-id="${doc.id}" class="delete-btn bg-red-100 text-red-800 px-3 py-1 text-sm rounded-full hover:bg-red-200 transition">Delete</button>
+                        </div>
+                    `;
+                    goalList.appendChild(goalEl);
+                });
+
+                document.querySelectorAll('.increment-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        let progress = parseInt(e.target.dataset.progress, 10);
+                        const docRef = doc(db, `artifacts/${appId}/users/${userId}/goals`, id);
+                        await setDoc(docRef, { progress: progress + 1 }, { merge: true });
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        const docRef = doc(db, `artifacts/${appId}/users/${userId}/goals`, id);
+                        await deleteDoc(docRef);
+                    });
+                });
+            }, (error) => console.error("Error loading goals:", error));
+        }
+
+        // --- SETTINGS AND DATA DOWNLOAD ---
+        const downloadJournalBtn = document.getElementById('download-journal');
+        const downloadGoalsBtn = document.getElementById('download-goals');
+        
+        function loadSettingsFromLocalStorage() {
+            const savedFbConfig = JSON.parse(localStorage.getItem('firebaseConfig'));
+            if (savedFbConfig) {
+                document.getElementById('fb-apiKey').value = savedFbConfig.apiKey || '';
+                document.getElementById('fb-authDomain').value = savedFbConfig.authDomain || '';
+                document.getElementById('fb-projectId').value = savedFbConfig.projectId || '';
+            }
+        }
+        
+        async function downloadCollectionAsJSON(collectionName, fileName) {
+            if (!userId) {
+                alert("Please connect first.");
+                return;
+            }
+            try {
+                const colRef = collection(db, `artifacts/${appId}/users/${userId}/${collectionName}`);
+                const snapshot = await getDocs(query(colRef, orderBy("createdAt", "desc")));
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                const jsonString = JSON.stringify(data, (key, value) => {
+                    if (value && typeof value.toDate === 'function') {
+                        return value.toDate().toISOString();
+                    }
+                    return value;
+                }, 2);
+
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${fileName}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error(`Error downloading ${collectionName}:`, error);
+                alert(`Could not download ${collectionName}. See console for details.`);
+            }
+        }
+
+        // --- EVENT LISTENERS & INITIAL LOAD ---
+        window.onload = () => {
+            document.getElementById('script-error-message').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+            
+            loadSettingsFromLocalStorage();
+            initializeAppLogic();
+            renderMeditationList();
+            
+            geminiApiKey = localStorage.getItem('geminiApiKey');
+            updateChatUI();
+
+            saveJournalBtn.addEventListener('click', saveJournalEntry);
+            stopMeditationBtn.addEventListener('click', stopMeditation);
+            chatSendBtn.addEventListener('click', handleChatSend);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleChatSend();
+            });
+            addGoalBtn.addEventListener('click', addGoal);
+            
+            saveFirebaseConfigBtn.addEventListener('click', () => {
+                const config = {
+                    apiKey: document.getElementById('fb-apiKey').value.trim(),
+                    authDomain: document.getElementById('fb-authDomain').value.trim(),
+                    projectId: document.getElementById('fb-projectId').value.trim(),
+                };
+                if (config.apiKey && config.authDomain && config.projectId) {
+                    localStorage.setItem('firebaseConfig', JSON.stringify(config));
+                    alert('Firebase config saved! The app will now reload.');
+                    window.location.reload();
+                } else {
+                    alert('Please fill in all Firebase fields.');
+                }
+            });
+
+            document.getElementById('save-api-key').addEventListener('click', () => {
+                const key = document.getElementById('api-key-input').value.trim();
+                if (key) {
+                    localStorage.setItem('geminiApiKey', key);
+                    geminiApiKey = key;
+                    alert('API Key saved!');
+                    updateChatUI();
+                }
+            });
+
+            downloadJournalBtn.addEventListener('click', () => downloadCollectionAsJSON('journal', 'mindease_journal'));
+            downloadGoalsBtn.addEventListener('click', () => downloadCollectionAsJSON('goals', 'mindease_goals'));
+        };
+    </script>
+</body>
+</html>
