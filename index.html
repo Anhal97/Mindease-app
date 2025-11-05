@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindEase - Your Mental Wellness Companion</title>
+    <title>MindEase - Your Mental Wellness Companion (India)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script>
@@ -48,9 +48,7 @@
             cursor: not-allowed;
         }
         
-        /* --- New Meditation Animations --- */
         #breathing-circle {
-            /* This makes the JS-driven transform for box breathing smooth */
             transition: transform 3s ease-in-out;
         }
         
@@ -61,11 +59,8 @@
         }
         
         .breathing-animation {
-            /* This class is added for a smooth, continuous breathing animation */
             animation: smooth-breathe 8s ease-in-out infinite;
         }
-        /* --- End of New Animations --- */
-
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -147,22 +142,16 @@
                 <!-- Meditate Section -->
                 <div id="meditate">
                     <h2 class="text-3xl font-bold mb-6">Guided Meditation & Breathing</h2>
-                    <!-- This is the player that shows when a session is active -->
                     <div id="meditation-player" class="hidden bg-white p-6 rounded-lg shadow-md mb-6 text-center">
                         <h3 id="player-title" class="text-2xl font-semibold mb-4"></h3>
                         <p id="player-description" class="text-gray-600 mb-4"></p>
-                        
-                        <!-- NEW: Timer Display -->
                         <p id="meditation-timer" class="text-3xl font-mono mb-4 text-gray-700"></p>
-                        
                         <div id="breathing-circle" class="w-40 h-40 bg-blue-300 rounded-full mx-auto my-4 flex items-center justify-center">
                             <span id="breathing-text" class="text-xl font-medium text-white"></span>
                         </div>
-                        <button id="stop-meditation" class="mt-4 bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition">Stop</Gbutton>
+                        <button id="stop-meditation" class="mt-4 bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition">Stop</button>
                     </div>
-                    <!-- This is the list of available sessions -->
                     <div id="meditation-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Sessions are rendered here by JavaScript -->
                     </div>
                 </div>
 
@@ -193,25 +182,33 @@
                     </div>
                 </div>
 
-                <!-- Resources Section -->
+                <!-- Resources Section (UPDATED FOR INDIA) -->
                 <div id="resources">
-                    <h2 class="text-3xl font-bold mb-6">Helpful Resources</h2>
+                    <h2 class="text-3xl font-bold mb-6">Support & Resources (India)</h2>
                     <div class="space-y-6">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold mb-2">Understanding Anxiety</h3>
-                            <p class="text-gray-600 mb-4">Learn about the symptoms, causes, and treatments for anxiety disorders. Knowledge is a powerful tool in managing your mental health.</p>
-                            <a href="https://www.nimh.nih.gov/health/topics/anxiety-disorders" target="_blank" class="text-blue-500 font-semibold hover:underline">Read more &rarr;</a>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-red-500">
+                            <h3 class="text-xl font-semibold mb-2">Immediate Support Helplines (24/7)</h3>
+                            <p class="text-gray-600 mb-4">If you are in crisis or need immediate support, please reach out. These services are free and confidential.</p>
+                            <div class="space-y-2">
+                                <p><strong>KIRAN (Govt. of India):</strong> <a href="tel:1800-599-0019" class="text-red-600 font-semibold hover:underline">1800-599-0019</a></p>
+                                <p><strong>Vandrevala Foundation:</strong> <a href="tel:+919999666555" class="text-red-600 font-semibold hover:underline">+91 9999 666 555</a></p>
+                                <p><strong>AASRA (Suicide Prevention):</strong> <a href="tel:+919820466726" class="text-red-600 font-semibold hover:underline">+91 98204 66726</a></p>
+                            </div>
                         </div>
+
                         <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold mb-2">Cognitive Behavioral Therapy (CBT)</h3>
-                            <p class="text-gray-600 mb-4">Discover how CBT techniques can help you identify and change negative thinking patterns and behaviors.</p>
-                            <a href="https://www.apa.org/ptsd-guideline/patients-and-families/cognitive-behavioral" target="_blank" class="text-blue-500 font-semibold hover:underline">Learn CBT Basics &rarr;</a>
+                            <h3 class="text-xl font-semibold mb-2">NIMHANS (National Institute)</h3>
+                            <p class="text-gray-600 mb-4">Access patient care information, resources, and publications from India's leading mental health institution (NIMHANS).</p>
+                            <a href="https://nimhans.ac.in/patient-care/" target="_blank" class="text-blue-500 font-semibold hover:underline">Explore NIMHANS Resources &rarr;</a>
                         </div>
+                        
                         <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold mb-2">Emergency Help</h3>
-                            <p class="text-gray-600 mb-4">If you are in crisis or need immediate support, please reach out to a professional. You are not alone.</p>
-                            <a href="https://findahelpline.com/" target="_blank" class="text-red-500 font-semibold hover:underline">Find a Helpline &rarr;</a>
+                            <h3 class="text-xl font-semibold mb-2">Find a Therapist in India</h3>
+                            <p class="text-gray-600 mb-4">Finding a professional to talk to is a sign of strength. Use this resource to find verified mental health professionals across India.</p>
+                            <a href="https://www.themindclan.com/find-support" target="_blank" class="text-blue-500 font-semibold hover:underline">Browse The Mind Clan Directory &rarr;</a>
                         </div>
+
                     </div>
                 </div>
 
@@ -262,20 +259,41 @@
             const authStatus = document.getElementById('auth-status');
             const firebaseStatus = document.getElementById('firebase-status');
             
+            // Check if we are on the live Netlify site
+            const isLive = window.location.hostname.endsWith('.netlify.app');
+
             try {
-                const response = await fetch('/.netlify/functions/get-firebase-config');
-                if (!response.ok) {
-                    throw new Error("Could not fetch Firebase config from server.");
+                let userFirebaseConfig;
+
+                if (isLive) {
+                    const response = await fetch('/.netlify/functions/get-firebase-config');
+                    if (!response.ok) {
+                        throw new Error("Could not fetch Firebase config from server.");
+                    }
+                    userFirebaseConfig = await response.json();
+                } else {
+                    // Fallback for local/preview environment.
+                    console.warn("Running in local/preview mode. Using fallback Firebase config.");
+                    authStatus.textContent = "Preview Mode";
+                    userFirebaseConfig = {
+                        apiKey: "AIzaSyBMbHtGu_AYgGzTwe8RcZsor23LosB2JRU",
+                        authDomain: "mindeaseapp-7a724.firebaseapp.com",
+                        projectId: "mindeaseapp-7a724"
+                    };
+                    
+                    if (!userFirebaseConfig.apiKey) {
+                         throw new Error("Fallback Firebase config is missing. App will not work in preview.");
+                    }
                 }
-                
-                const userFirebaseConfig = await response.json();
 
                 if (!userFirebaseConfig || !userFirebaseConfig.apiKey) {
                     throw new Error("Received invalid Firebase config.");
                 }
                 
-                firebaseStatus.textContent = "Firebase configuration loaded securely.";
-                firebaseStatus.className = "text-sm mt-2 text-green-600";
+                if (firebaseStatus) {
+                    firebaseStatus.textContent = isLive ? "Firebase configuration loaded securely." : "Firebase config (Preview Mode)";
+                    firebaseStatus.className = "text-sm mt-2 text-green-600";
+                }
                 
                 await initializeFirebase(userFirebaseConfig);
 
@@ -283,8 +301,10 @@
                 console.error("Initialization Error:", error);
                 authStatus.textContent = "Connection Failed";
                 authStatus.classList.add("text-red-400");
-                firebaseStatus.textContent = `Error: ${error.message}`;
-                firebaseStatus.className = "text-sm mt-2 text-red-600";
+                if (firebaseStatus) {
+                    firebaseStatus.textContent = `Error: ${error.message}`;
+                    firebaseStatus.className = "text-sm mt-2 text-red-600";
+                }
             }
         }
 
@@ -350,7 +370,6 @@
 
         async function saveJournalEntry() {
             if (!userId) {
-                // Use a modern, non-blocking way to notify user
                 console.warn("User not connected, cannot save journal.");
                 return;
             }
@@ -408,12 +427,11 @@
         const playerDescription = document.getElementById('player-description');
         const breathingCircle = document.getElementById('breathing-circle');
         const breathingText = document.getElementById('breathing-text');
-        const meditationTimer = document.getElementById('meditation-timer'); // NEW
+        const meditationTimer = document.getElementById('meditation-timer');
         
-        let synth, timerInterval, meditationStepInterval; // NEW/RENAMED
+        let synth, timerInterval, meditationStepInterval; 
 
         const sessions = [
-            // Durations are in seconds
             { id: 'box-breathing', title: 'Box Breathing', description: 'A simple technique to calm your nervous system. Inhale (4s), Hold (4s), Exhale (4s), Hold (4s).', duration: 120 },
             { id: 'mindful-breath', title: 'Mindful Breath', description: 'Focus on your natural breath to anchor yourself in the present moment.', duration: 180 },
             { id: '5-minute-calm', title: '5-Minute Calm', description: 'A short session to quickly reset and de-stress.', duration: 300 }
@@ -441,7 +459,6 @@
         }
         
         function startMeditation(sessionId) {
-            // Clear any old intervals first
             stopMeditation(); 
 
             const session = sessions.find(s => s.id === sessionId);
@@ -455,7 +472,6 @@
             Tone.start().catch(e => console.error("Tone.js could not start: ", e));
             synth = new Tone.Synth().toDestination();
             
-            // --- NEW: Start Timer ---
             let duration = session.duration;
             meditationTimer.textContent = formatTime(duration);
             
@@ -467,13 +483,11 @@
                 }
             }, 1000);
             
-            // --- NEW: Start Animation/Logic ---
-            breathingCircle.classList.remove('breathing-animation'); // Clear old
+            breathingCircle.classList.remove('breathing-animation'); 
             
             if (sessionId === 'box-breathing') {
                 runBoxBreathing();
             } else {
-                // Use CSS animation for other sessions
                 breathingCircle.classList.add('breathing-animation');
                 breathingText.textContent = 'Breathe';
             }
@@ -488,23 +502,20 @@
                 breathingText.textContent = instruction;
                 if(Tone.context.state === 'running') synth.triggerAttackRelease("C4", "0.1");
 
-                // Use JS to drive transform for box breathing steps
                 if (instruction === 'Inhale') {
                     breathingCircle.style.transform = 'scale(1.2)';
                 } else if (instruction === 'Exhale') {
                     breathingCircle.style.transform = 'scale(1.0)';
                 }
-                // On 'Hold', the transform just stays as it is
                 
                 step++;
             };
             
-            nextStep(); // Run the first step immediately
+            nextStep();
             meditationStepInterval = setInterval(nextStep, 4000);
         }
 
         function stopMeditation() {
-            // Clear both intervals
             clearInterval(timerInterval);
             clearInterval(meditationStepInterval);
             timerInterval = null;
@@ -515,16 +526,18 @@
             meditationPlayer.classList.add('hidden');
             meditationList.classList.remove('hidden');
             
-            // Reset circle state
             breathingCircle.classList.remove('breathing-animation');
             breathingCircle.style.transform = 'scale(1)';
             breathingText.textContent = '';
-            meditationTimer.textContent = ''; // Clear timer
+            meditationTimer.textContent = ''; 
         }
 
         // --- CHATBOT LOGIC ---
         const chatWindow = document.getElementById('chat-window');
-        const systemPrompt = "You are a caring and supportive mental wellness assistant named 'Ease'. Your role is to provide a safe, non-judgmental space for users. Offer comfort, practical advice based on CBT and mindfulness, and gentle encouragement. Do not provide medical diagnoses. If a user seems to be in serious distress, gently suggest they seek professional help. Keep your responses concise and empathetic.";
+        
+        // UPDATED SYSTEM PROMPT FOR INDIA
+        const systemPrompt = "You are a caring and supportive mental wellness assistant named 'Ease'. Your role is to provide a safe, non-judgmental space for users, with a specific focus on India. Offer comfort, practical advice based on CBT and mindfulness, and gentle encouragement. Do not provide medical diagnoses. If a user seems to be in serious distress, gently suggest they seek professional help and provide them with India-specific resources. Key Indian helplines to offer include KIRAN at 1800-599-0019 (a 24/7 national helpline) and the Vandrevala Foundation at +91 9999 666 555. Keep your responses concise, empathetic, and culturally aware for an Indian audience.";
+        
         let chatHistory = [];
         
         function updateChatUI() {
@@ -563,20 +576,20 @@
             chatWindow.appendChild(loadingBubble);
             chatWindow.scrollTop = chatWindow.scrollHeight;
             
-            const apiUrl = '/.netlify/functions/ask-chatbot';
+            const isLive = window.location.hostname.endsWith('.netlify.app');
+            const apiUrl = isLive ? '/.netlify/functions/ask-chatbot' : null;
+
+            if (!apiUrl) {
+                loadingBubble.remove();
+                addMessageToChat("The chatbot feature only works on the live, deployed Netlify website. This preview environment cannot access the secure AI key.", false);
+                chatHistory.pop(); // remove the user message
+                return;
+            }
 
             try {
-                const payloadContents = [...chatHistory];
-                // Check if chatHistory is not empty and the first message is from the model
-                // This is a common pattern to ensure the conversation starts with a user turn if needed
-                if (payloadContents.length > 0 && payloadContents[0].role === 'model') {
-                    // Prepend a generic user message to satisfy API constraints if necessary
-                    payloadContents.unshift({ role: "user", parts: [{ text: "Hello" }] });
-                }
-
                 const payload = {
-                    contents: payloadContents,
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    contents: chatHistory, // Send the chat history
+                    systemInstruction: { parts: [{ text: systemPrompt }] }, // Add the system prompt
                 };
 
                 const response = await fetch(apiUrl, {
@@ -598,7 +611,12 @@
                     addMessageToChat(aiText, false);
                     chatHistory.push({ role: "model", parts: [{ text: aiText }] });
                 } else {
-                    addMessageToChat("I'm sorry, I couldn't process that. Please try again.", false);
+                    // Check for blockage
+                    if (result.candidates?.[0]?.finishReason === 'SAFETY') {
+                        addMessageToChat("I'm sorry, I can't respond to that topic. Let's talk about something else.", false);
+                    } else {
+                        addMessageToChat("I'm sorry, I couldn't process that. Please try again.", false);
+                    }
                     chatHistory.pop(); // remove the user message if AI fails
                 }
 
@@ -743,7 +761,7 @@
             
             initializeAppLogic(); 
             
-            renderMeditationList(); // Call this on load
+            renderMeditationList(); 
             updateChatUI();
 
             saveJournalBtn.addEventListener('click', saveJournalEntry);
